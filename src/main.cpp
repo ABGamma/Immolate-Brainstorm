@@ -55,11 +55,33 @@ long filter_negative_tag(Instance inst) {
     return score;
 }
 
+long filter_suas_speedrun(Instance inst) {
+    //Mega Spectral Pack in shop with Ankh and Immolate
+    inst.nextPack(1); // Eat the Buffoon Pack
+    Item pack = inst.nextPack(1);
+    if (pack != Item::Mega_Spectral_Pack) return 0;
+    //First two cards in shop must be Mr Bones and Merry Andy
+    ShopItem item1 = inst.nextShopItem(1);
+    ShopItem item2 = inst.nextShopItem(1);
+    if ((item1.item != Item::Mr_Bones && item2.item != Item::Mr_Bones) || (item2.item != Item::Merry_Andy && item1.item != Item::Merry_Andy)) return 0;
+    //Check for Ankh and Immolate somewhere in the pack
+    std::vector<Item> packContents = inst.nextSpectralPack(4, 1);
+    bool ankh = false;
+    bool immolate = false;
+    for (int i = 0; i < 4; i++) {
+        if (packContents[i] == Item::Ankh) ankh = true;
+        if (packContents[i] == Item::Immolate) immolate = true;
+    }
+    if (!ankh || !immolate) return 1;
+    inst.initLocks(1, false, true);
+    Item tag = inst.nextTag(1);
+    if (tag != Item::Speed_Tag && tag != Item::Economy_Tag && tag != Item::Coupon_Tag && tag != Item::Foil_Tag && tag != Item::Holographic_Tag && tag != Item::Polychrome_Tag && tag != Item::Negative_Tag) return 2;
+    return 3;
+}
 
 int main() {
-    Search search(filter_negative_tag, "", 12, 100000000000);
-    search.printDelay = 2147483647;
-    search.highScore = 8;
+    Search search(filter_suas_speedrun, "9HS1O8", 12, 100000000000);
+    search.printDelay = 100000000;
     search.search();
     return 1;
 }
