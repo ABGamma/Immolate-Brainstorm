@@ -43,6 +43,13 @@ struct Instance {
         params = InstParams();
         rng = LuaRandom(0);
     };
+    void reset(std::string s) {
+        seed = s;
+        hashedSeed = pseudohash(s);
+        params = InstParams();
+        cache.nodes.clear();
+        cache.generatedFirstPack = false;
+    };
     double get_node(std::string ID) {
         if (cache.nodes.count(ID) == 0) {
             cache.nodes[ID] = pseudohash(ID+seed);

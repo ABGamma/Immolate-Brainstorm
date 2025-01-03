@@ -56,32 +56,63 @@ long filter_negative_tag(Instance inst) {
 }
 
 long filter_suas_speedrun(Instance inst) {
-    //Mega Spectral Pack in shop with Ankh and Immolate
-    inst.nextPack(1); // Eat the Buffoon Pack
-    Item pack = inst.nextPack(1);
-    if (pack != Item::Mega_Spectral_Pack) return 0;
-    //First two cards in shop must be Mr Bones and Merry Andy
-    ShopItem item1 = inst.nextShopItem(1);
-    ShopItem item2 = inst.nextShopItem(1);
-    if ((item1.item != Item::Mr_Bones && item2.item != Item::Mr_Bones) || (item2.item != Item::Merry_Andy && item1.item != Item::Merry_Andy)) return 0;
-    //Check for Ankh and Immolate somewhere in the pack
-    std::vector<Item> packContents = inst.nextSpectralPack(4, 1);
-    bool ankh = false;
-    bool immolate = false;
+    // First four cards in shop must include Mr. Bones, Merry Andy, and Luchador
+    bool bones = false, andy = false, luchador = false;
     for (int i = 0; i < 4; i++) {
-        if (packContents[i] == Item::Ankh) ankh = true;
-        if (packContents[i] == Item::Immolate) immolate = true;
+        ShopItem item = inst.nextShopItem(2);
+        if (item.item == Item::Mr_Bones) bones = true;
+        if (item.item == Item::Merry_Andy) andy = true;
+        if (item.item == Item::Luchador) luchador = true;
     }
-    if (!ankh || !immolate) return 1;
+    if (!bones || !andy || !luchador) return 0;
+    // Ante 1 must have a Coupon Tag
     inst.initLocks(1, false, true);
-    Item tag = inst.nextTag(1);
-    if (tag != Item::Speed_Tag && tag != Item::Economy_Tag && tag != Item::Coupon_Tag && tag != Item::Foil_Tag && tag != Item::Holographic_Tag && tag != Item::Polychrome_Tag && tag != Item::Negative_Tag) return 2;
+    bool coupon = false;
+    for (int i = 0; i < 2; i++) {
+        if (inst.nextTag(1) == Item::Coupon_Tag) coupon = true;
+    }
+    if (!coupon) return 1;
+    // Ante 2 Boss must be The Wall
+    inst.nextBoss(1);
+    inst.initUnlocks(2, false);
+    if (inst.nextBoss(2) != Item::The_Wall) return 2;
     return 3;
 }
 
-int main() {
-    Search search(filter_suas_speedrun, "9HS1O8", 12, 100000000000);
-    search.printDelay = 100000000;
+long filter_blank(Instance inst) {
+    return 0;
+}
+
+// Benchmark function
+// Runs 1 billion seeds of perkeo observatory
+// And prints total time and seeds per second
+void benchmark() {
+    long total = 0;
+    long start = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    Search search(filter_perkeo_observatory, "IMMOLATE", 12, 100000000);
+    search.highScore = 10; // No output
     search.search();
+    long end = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::cout << "----PERKEO OBSERVATORY----\n";
+    std::cout << "Total time: " << end - start << "ms\n";
+    std::cout << "Seeds per second: " << std::fixed << std::setprecision(0) << 100000000 / ((end - start) / 1000.0) << "\n";
+}
+
+void benchmark_blank() {
+    long total = 0;
+    long start = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    Search search(filter_blank, "IMMOLATE", 12, 100000000);
+    search.printDelay = 100000000000; // No output
+    search.search();
+    long end = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::cout << "-------BLANK FILTER-------\n";
+    std::cout << "Total time: " << end - start << "ms\n";
+    std::cout << "Seeds per second: " << std::fixed << std::setprecision(0) << 100000000 / ((end - start) / 1000.0) << "\n";
+}
+
+
+int main() {
+    benchmark();
+    benchmark_blank();
     return 1;
 }

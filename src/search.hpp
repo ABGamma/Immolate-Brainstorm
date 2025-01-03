@@ -3,12 +3,12 @@
 #include <atomic>
 
 struct Search {
-    long numSeeds;
+    long long numSeeds;
     int numThreads;
     std::array<int, 9> startSeed; // The first entry indicates the length of the seed
-    long seedsProcessed = 0;
-    long highScore = 0;
-    long printDelay = 1000000;
+    long long seedsProcessed = 0;
+    long long highScore = 0;
+    long long printDelay = 10000000;
     std::function<int(Instance)> filter;
     std::atomic<bool> found{false}; // Atomic flag to signal when a solution is found
     std::array<int, 9> foundSeed = {0};   // Store the found seed
@@ -19,10 +19,10 @@ struct Search {
         for (int i = 0; i < ID; i++) {
             nextSeed(seed);
         }
+        Instance inst(seedToString(seed));
         for (int i = 0; i < (numSeeds - ID) / numThreads; i++) {
             if (exitOnFind && found.load()) return; // Exit if another thread found a valid seed
-
-            Instance inst(seedToString(seed));
+            inst.reset(seedToString(seed));
             long score = filter(inst);
             if (score >= highScore && score > 0 && (!exitOnFind || !found.load())) {
                 found.store(true);
@@ -70,13 +70,13 @@ struct Search {
         numThreads = t;
         numSeeds =  2318107019761;
     };
-    Search(std::function<int(Instance)> f, int t, int n) {
+    Search(std::function<int(Instance)> f, int t, long long n) {
         filter = f;
         startSeed = stringToSeed("");
         numThreads = t;
         numSeeds = n;
     };
-    Search(std::function<int(Instance)> f, std::string seed, int t, int n) {
+    Search(std::function<int(Instance)> f, std::string seed, int t, long long n) {
         filter = f;
         startSeed = stringToSeed(seed);
         numThreads = t;
