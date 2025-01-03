@@ -32,27 +32,27 @@ struct InstParams {
 
 struct Instance {
     bool locked[(int)Item::ITEMS_END] = {false};
-    std::string seed;
+    Seed seed;
     double hashedSeed;
     Cache cache;
     InstParams params;
     LuaRandom rng;
-    Instance(std::string s) {
+    Instance(Seed s) {
         seed = s;
-        hashedSeed = pseudohash(s);
+        hashedSeed = pseudohash(s.tostring());
         params = InstParams();
         rng = LuaRandom(0);
     };
-    void reset(std::string s) {
+    void reset(Seed s) {
         seed = s;
-        hashedSeed = pseudohash(s);
+        hashedSeed = pseudohash(s.tostring());
         params = InstParams();
         cache.nodes.clear();
         cache.generatedFirstPack = false;
     };
     double get_node(std::string ID) {
         if (cache.nodes.count(ID) == 0) {
-            cache.nodes[ID] = pseudohash(ID+seed);
+            cache.nodes[ID] = pseudohash(ID+seed.tostring());
         }
         cache.nodes[ID] = round13(fract(cache.nodes[ID]*1.72431234+2.134453429141));
         return (cache.nodes[ID] + hashedSeed)/2;

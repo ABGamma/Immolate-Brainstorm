@@ -1,4 +1,5 @@
 #include "util.hpp"
+#include "seed.hpp"
 #include "items.hpp"
 #include "rng.hpp"
 #include "instance.hpp"

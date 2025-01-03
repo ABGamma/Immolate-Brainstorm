@@ -4,7 +4,8 @@
 #include <thread>
 #include <vector>
 
-Item BRAINSTORM_PACK = Item::RETRY;
+
+/*Item BRAINSTORM_PACK = Item::RETRY;
 Item BRAINSTORM_TAG = Item::Charm_Tag;
 long BRAINSTORM_SOULS = 1;
 
@@ -62,4 +63,4 @@ extern "C" {
     IMMOLATE_API void free_result(const char* result) {
         free((void*)result);
     }
-}
+}*/
