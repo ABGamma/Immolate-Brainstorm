@@ -3,10 +3,14 @@ project(Immolate)
 
 # Define sources for the library
 set(LIB_SOURCES
-    src/immolate.cpp
-    src/immolate.hpp
-    src/util.hpp
+    src/functions.hpp
     src/instance.hpp
+    src/items.cpp
+    src/rng.cpp
+    src/search.cpp
+    src/seed.cpp
+    src/util.cpp
+    src/functions.cpp
 )
 
 # Define sources for the executable
@@ -18,8 +22,16 @@ set(EXECUTABLE_SOURCES
 if(MSVC)
     set(OPTIMIZATION_FLAGS "/Ox")  # Full optimization for MSVC
 else()
-    set(OPTIMIZATION_FLAGS "-O3")  # Full optimization for GCC/Clang
+    set(OPTIMIZATION_FLAGS "-O3 -g")  # Full optimization for GCC/Clang, plus debugging info
 endif()
+
+# if(NOT MSVC)
+#     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+#     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+#     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=address")
+# endif()
+
+
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
