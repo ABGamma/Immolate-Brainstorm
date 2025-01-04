@@ -1,4 +1,5 @@
 #include "util.hpp"
+#include <cstring>
 #include <limits>
 
 LuaRandom::LuaRandom(double seed) {
@@ -100,7 +101,10 @@ int portable_clzll(uint64_t x) {
 }
 
 double fract(double x) {
-  uint64_t x_int = *(uint64_t *)&x;
+  uint64_t x_int;
+
+  std::memcpy(&x_int, &x, sizeof(x_int));
+
   uint64_t expo = (x_int & DBL_EXPO) >> DBL_MANT_SZ;
   if (expo < DBL_EXPO_BIAS) {
     return x;
@@ -121,7 +125,10 @@ double fract(double x) {
   uint64_t res_expo = (expo - frac_lzcnt - 1) << DBL_MANT_SZ;
   uint64_t res_mant = (frac_mant << (frac_lzcnt + 1)) & DBL_MANT;
   uint64_t res = res_expo | res_mant;
-  return *(double *)&res;
+
+  double result;
+  std::memcpy(&result, &res, sizeof(result));
+  return result;
 }
 
 double pseudohash(std::string s) {

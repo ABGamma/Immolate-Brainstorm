@@ -6,7 +6,7 @@ Seed::Seed() { seed.fill(-1); }
 Seed::Seed(std::string strSeed) {
   seed.fill(-1);
   // Note: Assumes this is safe
-  for (int i = 0; i < strSeed.size(); i++) {
+  for (long unsigned int i = 0; i < strSeed.size(); i++) {
     seed[strSeed.size() - 1 - i] = charSeeds[strSeed[i]];
   }
 }

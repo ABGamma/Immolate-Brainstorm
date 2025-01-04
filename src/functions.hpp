@@ -574,7 +574,7 @@ inline void Instance::activateVoucher(Item voucher) {
   params.vouchers[(int)voucher - (int)Item::Overstock] = true;
   lock(voucher);
   // Unlock next level voucher
-  for (int i = 0; i < VOUCHERS.size(); i += 2) {
+  for (unsigned long int i = 0; i < VOUCHERS.size(); i += 2) {
     if (VOUCHERS[i] == voucher) {
       unlock(VOUCHERS[i + 1]);
     };
@@ -612,7 +612,7 @@ inline Item Instance::nextBoss(int ante) {
   std::array<Item, MAX_BOSSES> bossPool;
   int numBosses = 0;
 
-  for (int i = 0; i < BOSSES.size(); i++) {
+  for (unsigned long int i = 0; i < BOSSES.size(); i++) {
     if (!isLocked(BOSSES[i])) {
       if ((ante % 8 == 0 && BOSSES[i] > Item::B_F_BEGIN) ||
           (ante % 8 != 0 && BOSSES[i] < Item::B_F_BEGIN)) {
@@ -622,7 +622,7 @@ inline Item Instance::nextBoss(int ante) {
   }
 
   if (numBosses == 0) {
-    for (int i = 0; i < BOSSES.size(); i++) {
+    for (unsigned long int i = 0; i < BOSSES.size(); i++) {
       if ((ante % 8 == 0 && BOSSES[i] > Item::B_F_BEGIN) ||
           (ante % 8 != 0 && BOSSES[i] < Item::B_F_BEGIN)) {
         unlock(BOSSES[i]);
