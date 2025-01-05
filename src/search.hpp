@@ -7,86 +7,106 @@
 #include <iostream>
 #include <thread>
 
-struct Search {
-  long long numSeeds;
-  int numThreads;
-  Seed startSeed; // The first entry indicates the length of the seed
-  long long seedsProcessed = 0;
-  long long highScore = 0;
-  long long printDelay = 10000000;
-  std::function<int(Instance)> filter;
-  std::atomic<bool> found{
-      false};     // Atomic flag to signal when a solution is found
-  Seed foundSeed; // Store the found seed
-  bool exitOnFind = false;
+#include <atomic>
+#include <functional>
+#include <iostream>
+#include <thread>
+#include <vector>
+#include <mutex>
 
-  void searching_thread(int ID) {
-    Seed seed = Seed(startSeed.getID() + ID);
-    Instance inst(seed);
-    for (int i = 0; i < (numSeeds - ID) / numThreads; i++) {
-      if (exitOnFind && found.load())
-        return; // Exit if another thread found a valid seed
-      inst.reset(seed);
-      long score = filter(inst);
-      if (score >= highScore && score > 0 && (!exitOnFind || !found.load())) {
-        found.store(true);
-        foundSeed = seed;
-        highScore = score;
-        std::cout << "Found seed: " << seed.tostring() << " (" << score << ")"
+
+const long long BLOCK_SIZE = 1000000;
+
+class Search {
+public:
+    long long seedsProcessed = 0;
+    long long highScore = 1;
+    long long printDelay = 10000000;
+    std::function<int(Instance)> filter;
+    std::atomic<bool> found{false}; // Atomic flag to signal when a solution is found
+    Seed foundSeed; // Store the found seed
+    bool exitOnFind = false;
+    Seed startSeed;
+    int numThreads;
+    long long numSeeds;
+    std::mutex mtx;
+    std::atomic<long long> nextBlock{0}; // Shared index for the next block to be processed
+
+    Search(std::function<int(Instance)> f) {
+        filter = f;
+        startSeed = Seed(0);
+        numThreads = 1;
+        numSeeds = 2318107019761;
+    }
+
+    Search(std::function<int(Instance)> f, int t) {
+        filter = f;
+        startSeed = Seed(0);
+        numThreads = t;
+        numSeeds = 2318107019761;
+    }
+    
+    Search(std::function<int(Instance)> f, int t, long long n) {
+      filter = f;
+      startSeed = Seed(0);
+      numThreads = t;
+      numSeeds = n;
+    };
+    Search(std::function<int(Instance)> f, std::string seed, int t, long long n) {
+      filter = f;
+      startSeed = Seed(0);
+      numThreads = t;
+      numSeeds = n;
+    };
+
+    void searchBlock(long long start, long long end) {
+        Seed s = Seed(start);
+        Instance inst(s);
+        for (long long i = start; i < end; ++i) {
+            if (found) return; // Exit if a solution is found
+            // Perform the search on the seed
+            int result = filter(inst);
+            if (result >= highScore) {
+                std::lock_guard<std::mutex> lock(mtx);
+                highScore = result;
+                foundSeed = s;
+                std::cout << "Found seed: " << s.tostring() << " (" << result << ")"
                   << std::endl;
-        if (exitOnFind) {
-          std::cout << "Seed found, exiting..." << std::endl;
-          return; // Exit thread after finding the solution
+                if (exitOnFind) {
+                    found = true;
+                    return;
+                }
+            }
+            seedsProcessed++;
+            if (seedsProcessed % printDelay == 0) {
+                std::cout << "Seeds processed: " << seedsProcessed << std::endl;
+            }
+            s.next();
+            inst.reset(s);
         }
-      }
-      seedsProcessed++;
-      if (seedsProcessed % printDelay == 0) {
-        std::cout << seedsProcessed << " seeds searched" << std::endl;
-      };
-      //seed.next(numThreads);
-      seed.next(); // For now, run single-threaded
     }
-  }
 
-  std::string search() {
-    std::vector<std::thread> threads;
-    // For now, run single-threaded
-    //for (int i = 0; i < numThreads; ++i) {
-      // Bind the member function with the instance of the class
-      auto bound_thread_func = std::bind(&Search::searching_thread, this, 0);//i);
-      // Use a lambda function to capture the bound function and start a thread
-      threads.emplace_back([bound_thread_func]() { bound_thread_func(); });
-    //}
-    for (std::thread &t : threads) {
-      t.join();
+    std::string search() {
+        std::vector<std::thread> threads;
+        long long totalBlocks = (numSeeds + BLOCK_SIZE - 1) / BLOCK_SIZE;
+        for (int t = 0; t < numThreads; t++) {
+            threads.emplace_back([this, totalBlocks]() {
+                while (true) {
+                    long long block = nextBlock.fetch_add(1);
+                    if (block >= totalBlocks) break;
+                    long long start = block * BLOCK_SIZE;
+                    long long end = std::min(start + BLOCK_SIZE, numSeeds);
+                    searchBlock(start, end);
+                }
+            });
+        }
+
+        for (auto& thread : threads) {
+            thread.join();
+        }
+
+        return foundSeed.tostring();
     }
-    return foundSeed.tostring(); // Return the found seed
-  }
-
-  Search(std::function<int(Instance)> f) {
-    filter = f;
-    startSeed = Seed(0);
-    numThreads = 1;
-    numSeeds = 2318107019761;
-  };
-  Search(std::function<int(Instance)> f, int t) {
-    filter = f;
-    startSeed = Seed(0);
-    numThreads = t;
-    numSeeds = 2318107019761;
-  };
-  Search(std::function<int(Instance)> f, int t, long long n) {
-    filter = f;
-    startSeed = Seed(0);
-    numThreads = t;
-    numSeeds = n;
-  };
-  Search(std::function<int(Instance)> f, std::string seed, int t, long long n) {
-    filter = f;
-    startSeed = Seed(0);
-    numThreads = t;
-    numSeeds = n;
-  };
 };
 
 #endif
