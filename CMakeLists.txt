@@ -1,12 +1,21 @@
 cmake_minimum_required(VERSION 3.10)
-project(Immolate)
+project(Immolate LANGUAGES CXX)
+
+# Set C++ standard and required flags
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Define sources for the library
 set(LIB_SOURCES
-    src/immolate.cpp
-    src/immolate.hpp
-    src/util.hpp
+    src/functions.hpp
     src/instance.hpp
+    src/items.cpp
+    src/rng.cpp
+    src/search.cpp
+    src/seed.cpp
+    src/util.cpp
+    src/functions.cpp
 )
 
 # Define sources for the executable
@@ -18,28 +27,24 @@ set(EXECUTABLE_SOURCES
 if(MSVC)
     set(OPTIMIZATION_FLAGS "/Ox")  # Full optimization for MSVC
 else()
-    set(OPTIMIZATION_FLAGS "-O3")  # Full optimization for GCC/Clang
+    set(OPTIMIZATION_FLAGS "-O3 -g -std=c++17 -Wall -Wextra -Wpedantic -Wno-c++17-extensions")  # Full optimization for GCC/Clang, plus debugging info
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-# I need a better check for ARM before I re-add this
-IF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm") 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OPTIMIZATION_FLAGS} -ffp-model=fast /fp:fast -fp-model=fast") 
-# I ran into issues when enabling this one on x86, so this check could cause some trouble down the road
-ELSE(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OPTIMIZATION_FLAGS}") 
-ENDIF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
-# Output compile_commands.json for clangd
-set(CMAKE_EXPORT_COMPILE_COMMANDS True)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OPTIMIZATION_FLAGS}")
 
-# Create the shared library (DLL)
-add_library(${PROJECT_NAME} SHARED ${LIB_SOURCES})
+# Arm specific flags, todo; properly test this
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffp-model=fast -fp-model=fast")
+endif()
+
+# Output compile_commands.json for clangd stuff
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+add_library(${PROJECT_NAME} STATIC ${LIB_SOURCES})
 
 # Define BUILDING_DLL when compiling the DLL
 target_compile_definitions(${PROJECT_NAME} PRIVATE BUILDING_DLL)
 
-# Set properties for the shared library
 set_target_properties(${PROJECT_NAME} PROPERTIES
     PREFIX ""
     RUNTIME_OUTPUT_NAME "${PROJECT_NAME}"
@@ -55,6 +60,5 @@ generate_export_header(${PROJECT_NAME}
     STATIC_DEFINE IMMOLATE_BUILT_AS_STATIC
 )
 
-# Create the executable and link it with the library
 add_executable(immol ${EXECUTABLE_SOURCES})
 target_link_libraries(immol ${PROJECT_NAME})
