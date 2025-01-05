@@ -40,13 +40,11 @@ endif()
 # Output compile_commands.json for clangd stuff
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Create shared library dll
-add_library(${PROJECT_NAME} SHARED ${LIB_SOURCES})
+add_library(${PROJECT_NAME} STATIC ${LIB_SOURCES})
 
 # Define BUILDING_DLL when compiling the DLL
 target_compile_definitions(${PROJECT_NAME} PRIVATE BUILDING_DLL)
 
-# Set properties for the shared library
 set_target_properties(${PROJECT_NAME} PROPERTIES
     PREFIX ""
     RUNTIME_OUTPUT_NAME "${PROJECT_NAME}"
@@ -62,6 +60,5 @@ generate_export_header(${PROJECT_NAME}
     STATIC_DEFINE IMMOLATE_BUILT_AS_STATIC
 )
 
-# Create the executable and link it with the library
 add_executable(immol ${EXECUTABLE_SOURCES})
 target_link_libraries(immol ${PROJECT_NAME})

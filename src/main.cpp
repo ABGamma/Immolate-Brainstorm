@@ -120,6 +120,24 @@ void benchmark() {
   //           << 100000000 / ((end - start) / 1000.0) << "\n";
 }
 
+void benchmark_quick() {
+  long total = 0;
+  long start = std::chrono::duration_cast<std::chrono::milliseconds>(
+                   std::chrono::system_clock::now().time_since_epoch())
+                   .count();
+  Search search(filter_perkeo_observatory, "IMMOLATE", 12, 100000000);
+   search.highScore = 10; // No output
+  search.printDelay = 100000000000;
+  std::cout << search.search();
+  long end = std::chrono::duration_cast<std::chrono::milliseconds>(
+                 std::chrono::system_clock::now().time_since_epoch())
+                 .count();
+   std::cout << "----PERKEO OBSERVATORY----\n";
+   std::cout << "Total time: " << end - start << "ms\n";
+   std::cout << "Seeds per second: " << std::fixed << std::setprecision(0)
+             << 100000000 / ((end - start) / 1000.0) << "\n";
+}
+
 void benchmark_blank() {
   long total = 0;
   long start = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -138,7 +156,7 @@ void benchmark_blank() {
 }
 
 int main() {
-  benchmark();
-  // benchmark_blank();
+  benchmark_quick();
+  benchmark_blank();
   return 1;
 }
