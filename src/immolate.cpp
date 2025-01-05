@@ -1,8 +1,8 @@
-
-#include "immolate.hpp"
+#include "functions.hpp"
+#include "search.hpp"
 #include <cstring>
 
-/*Item BRAINSTORM_PACK = Item::RETRY;
+Item BRAINSTORM_PACK = Item::RETRY;
 Item BRAINSTORM_TAG = Item::Charm_Tag;
 long BRAINSTORM_SOULS = 1;
 
@@ -56,4 +56,4 @@ brainstorm_cpp(cpp_seed, cpp_pack, cpp_tag, souls);
     IMMOLATE_API void free_result(const char* result) {
         free((void*)result);
     }
-}*/
+}
