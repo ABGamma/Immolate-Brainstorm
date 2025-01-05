@@ -72,10 +72,10 @@ void Seed::next() {
   } else {
     int i = 7;
     while (i >= 0) {
+      cache[i].fill(-1);
       if (seed[i] == 34) {
         seed[i] = -1;
         length--;
-        cache[length].fill(-1);
       } else {
         seed[i]++;
         break;
