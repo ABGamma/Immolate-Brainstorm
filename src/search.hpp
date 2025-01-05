@@ -43,18 +43,20 @@ struct Search {
       if (seedsProcessed % printDelay == 0) {
         std::cout << seedsProcessed << " seeds searched" << std::endl;
       };
-      seed.next(numThreads);
+      //seed.next(numThreads);
+      seed.next(); // For now, run single-threaded
     }
   }
 
   std::string search() {
     std::vector<std::thread> threads;
-    for (int i = 0; i < numThreads; ++i) {
+    // For now, run single-threaded
+    //for (int i = 0; i < numThreads; ++i) {
       // Bind the member function with the instance of the class
-      auto bound_thread_func = std::bind(&Search::searching_thread, this, i);
+      auto bound_thread_func = std::bind(&Search::searching_thread, this, 0);//i);
       // Use a lambda function to capture the bound function and start a thread
       threads.emplace_back([bound_thread_func]() { bound_thread_func(); });
-    }
+    //}
     for (std::thread &t : threads) {
       t.join();
     }

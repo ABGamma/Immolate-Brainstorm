@@ -38,6 +38,8 @@ struct LuaRandom {
 int portable_clzll(uint64_t x);
 double fract(double x);
 double pseudohash(std::string s);
+double pseudohash_from(std::string s, double num);
+double pseudostep(char s, int pos, double num);
 std::string anteToString(int a);
 double round13(double x);
 

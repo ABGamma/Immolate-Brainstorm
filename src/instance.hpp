@@ -42,20 +42,20 @@ struct Instance {
   LuaRandom rng;
   Instance(Seed s) {
     seed = s;
-    hashedSeed = pseudohash(s.tostring());
+    hashedSeed = s.pseudohash(0);
     params = InstParams();
     rng = LuaRandom(0);
   };
   void reset(Seed s) {
     seed = s;
-    hashedSeed = pseudohash(s.tostring());
+    hashedSeed = s.pseudohash(0);
     params = InstParams();
     cache.nodes.clear();
     cache.generatedFirstPack = false;
   };
   double get_node(std::string ID) {
     if (cache.nodes.count(ID) == 0) {
-      cache.nodes[ID] = pseudohash(ID + seed.tostring());
+      cache.nodes[ID] = pseudohash_from(ID, seed.pseudohash(ID.length()));
     }
     cache.nodes[ID] =
         round13(fract(cache.nodes[ID] * 1.72431234 + 2.134453429141));

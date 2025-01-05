@@ -140,6 +140,19 @@ double pseudohash(std::string s) {
   return num;
 }
 
+double pseudohash_from(std::string s, double num) {
+  for (size_t i = s.length(); i > 0; i--) {
+    num = fract(1.1239285023 / num * s[i - 1] * 3.141592653589793116 +
+                3.141592653589793116 * i);
+  }
+  return num;
+}
+
+double pseudostep(char s, int pos, double num) {
+  return fract(1.1239285023 / num * s * 3.141592653589793116 +
+               3.141592653589793116 * pos);
+}
+
 std::string anteToString(int a) {
   if (a < 10)
     return {(char)(0x30 + a)};

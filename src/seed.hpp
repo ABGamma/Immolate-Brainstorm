@@ -27,6 +27,11 @@ struct Seed {
   // To aid in hashing, stored right to left
   std::array<int, 8> seed;
 
+  int length; 
+
+  // The cache. Stored as [position in seed][length of string]
+  std::array<std::array<double, 48>, 8> cache;
+
   Seed();
   Seed(std::string strSeed);
   Seed(long long id);
@@ -37,6 +42,8 @@ struct Seed {
 
   void next();
   void next(int x);
+
+  double pseudohash(int prefixLength);
 };
 
 #endif // SEED_HPP
