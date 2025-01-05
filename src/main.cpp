@@ -114,7 +114,7 @@ void benchmark() {
   long end = std::chrono::duration_cast<std::chrono::milliseconds>(
                  std::chrono::system_clock::now().time_since_epoch())
                  .count();
-  std::cout << "----LONGER TESTING----\n";
+  std::cout << "------LONGER TESTING------\n";
   std::cout << "Total time: " << end - start << "ms\n";
   std::cout << "Seeds per second: " << std::fixed << std::setprecision(0)
              << 1000000000 / ((end - start) / 1000.0) << "\n";
