@@ -35,18 +35,17 @@ struct InstParams {
 
 struct Instance {
   bool locked[(int)Item::ITEMS_END] = {false};
-  Seed seed;
+  Seed& seed;
   double hashedSeed;
   Cache cache;
   InstParams params;
   LuaRandom rng;
-  Instance(Seed s) {
-    seed = s;
+  Instance(Seed& s) : seed(s) {
     hashedSeed = s.pseudohash(0);
     params = InstParams();
     rng = LuaRandom(0);
   };
-  void reset(Seed s) {
+  void reset(Seed& s) {
     seed = s;
     hashedSeed = s.pseudohash(0);
     params = InstParams();

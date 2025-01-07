@@ -19,8 +19,8 @@ const long long BLOCK_SIZE = 1000000;
 
 class Search {
 public:
-    long long seedsProcessed = 0;
-    long long highScore = 1;
+    std::atomic<long long> seedsProcessed{0};
+    std::atomic<long long> highScore{1};
     long long printDelay = 10000000;
     std::function<int(Instance)> filter;
     std::atomic<bool> found{false}; // Atomic flag to signal when a solution is found
