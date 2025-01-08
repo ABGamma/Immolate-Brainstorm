@@ -45,13 +45,20 @@ struct Instance {
     params = InstParams();
     rng = LuaRandom(0);
   };
-  void reset(Seed& s) {
+  void reset(Seed& s) { // This is slow, use next() unless necessary
     seed = s;
     hashedSeed = s.pseudohash(0);
     params = InstParams();
     cache.nodes.clear();
     cache.generatedFirstPack = false;
   };
+  void next() {
+    seed.next();
+    hashedSeed = seed.pseudohash(0);
+    params = InstParams();
+    cache.nodes.clear();
+    cache.generatedFirstPack = false;
+  }
   double get_node(std::string ID) {
     if (cache.nodes.count(ID) == 0) {
       cache.nodes[ID] = pseudohash_from(ID, seed.pseudohash(ID.length()));

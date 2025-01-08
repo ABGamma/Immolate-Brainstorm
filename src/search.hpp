@@ -81,8 +81,7 @@ public:
             if (seedsProcessed % printDelay == 0) {
                 std::cout << "Seeds processed: " << seedsProcessed << std::endl;
             }
-            s.next();
-            inst.reset(s);
+            inst.next();
         }
     }
 
