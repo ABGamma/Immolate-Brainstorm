@@ -99,6 +99,43 @@ long filter_suas_speedrun(Instance inst) {
 
 long filter_blank(Instance inst) { return 0; }
 
+// These won't be permanent filters, just ones I sub in and out while JSON filters aren't ready yet
+long filter_test(Instance inst) {
+  // Four Fingers, Shortcut, and Smeared Joker in first two antes (https://discord.com/channels/1325151824638120007/1326284714125955183)
+  bool fingers = false;
+  bool shortcut = false;
+  bool smeared = false;
+  // 4 chances in Ante 1, 6 chances in Ante 2, so no rerolling
+  for (int i = 0; i < 4; i++) {
+    ShopItem item = inst.nextShopItem(1);
+    if (item.item == Item::Four_Fingers) {
+      fingers = true;
+    };
+    if (item.item == Item::Shortcut) {
+      shortcut = true;
+    };
+    if (item.item == Item::Smeared_Joker) {
+      smeared = true;
+    };
+  }
+  for (int i = 0; i < 6; i++) {
+    ShopItem item = inst.nextShopItem(2);
+    if (item.item == Item::Four_Fingers) {
+      fingers = true;
+    };
+    if (item.item == Item::Shortcut) {
+      shortcut = true;
+    };
+    if (item.item == Item::Smeared_Joker) {
+      smeared = true;
+    };
+  }
+  if (fingers && shortcut && smeared) {
+    return 1;
+  }
+  return 0;
+}
+
 // Benchmark function
 // Runs 1 billion seeds of perkeo observatory
 // And prints total time and seeds per second
@@ -171,6 +208,11 @@ void benchmark_blank() {
   std::cout << "Total time: " << end - start << "ms\n";
   std::cout << "Seeds per second: " << std::fixed << std::setprecision(0)
             << 100000000 / ((end - start) / 1000.0) << "\n";
+}
+
+void run_filter(std::function<int(Instance)> f) {
+  Search search(f, 12);
+  search.search();
 }
 
 int main() {
