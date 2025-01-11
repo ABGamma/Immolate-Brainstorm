@@ -31,8 +31,6 @@ public:
   int numThreads;
   long long numSeeds;
   std::mutex mtx;
-  std::atomic<long long> nextBlock{
-      0}; // Shared index for the next block to be processed
 
   Search(std::function<int(Instance)> f, std::string seed = 0, int t = 1,
          long long n = 2318107019761) {
