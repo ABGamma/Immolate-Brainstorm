@@ -27,7 +27,7 @@ set(EXECUTABLE_SOURCES
 if(MSVC)
     set(OPTIMIZATION_FLAGS "/Ox")  # Full optimization for MSVC
 else()
-    set(OPTIMIZATION_FLAGS "-O3 -g -std=c++17 -Wall -Wextra -Wpedantic -Wno-c++17-extensions")  # Full optimization for GCC/Clang, plus debugging info
+    set(OPTIMIZATION_FLAGS "-O3 -g -std=c++20 -Wall -Wextra -Wpedantic -Wno-c++17-extensions -gdwarf-3 -ldl")  # Full optimization for GCC/Clang, plus debugging info
 endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OPTIMIZATION_FLAGS}")
