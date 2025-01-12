@@ -99,9 +99,11 @@ long filter_suas_speedrun(Instance inst) {
 
 long filter_blank(Instance inst) { return 0; }
 
-// These won't be permanent filters, just ones I sub in and out while JSON filters aren't ready yet
+// These won't be permanent filters, just ones I sub in and out while JSON
+// filters aren't ready yet
 long filter_test(Instance inst) {
-  // Four Fingers, Shortcut, and Smeared Joker in first two antes (https://discord.com/channels/1325151824638120007/1326284714125955183)
+  // Four Fingers, Shortcut, and Smeared Joker in first two antes
+  // (https://discord.com/channels/1325151824638120007/1326284714125955183)
   bool fingers = false;
   bool shortcut = false;
   bool smeared = false;
@@ -154,7 +156,7 @@ void benchmark() {
   std::cout << "------LONGER TESTING------\n";
   std::cout << "Total time: " << end - start << "ms\n";
   std::cout << "Seeds per second: " << std::fixed << std::setprecision(0)
-             << 1000000000 / ((end - start) / 1000.0) << "\n";
+            << 1000000000 / ((end - start) / 1000.0) << "\n";
 }
 
 void benchmark_quick() {
@@ -169,10 +171,10 @@ void benchmark_quick() {
   long end = std::chrono::duration_cast<std::chrono::milliseconds>(
                  std::chrono::system_clock::now().time_since_epoch())
                  .count();
-   std::cout << "----PERKEO OBSERVATORY----\n";
-   std::cout << "Total time: " << end - start << "ms\n";
-   std::cout << "Seeds per second: " << std::fixed << std::setprecision(0)
-             << 100000000 / ((end - start) / 1000.0) << "\n";
+  std::cout << "----PERKEO OBSERVATORY----\n";
+  std::cout << "Total time: " << end - start << "ms\n";
+  std::cout << "Seeds per second: " << std::fixed << std::setprecision(0)
+            << 100000000 / ((end - start) / 1000.0) << "\n";
 }
 
 void benchmark_single() {
@@ -187,10 +189,10 @@ void benchmark_single() {
   long end = std::chrono::duration_cast<std::chrono::milliseconds>(
                  std::chrono::system_clock::now().time_since_epoch())
                  .count();
-   std::cout << "----SINGLE THREADED PO----\n";
-   std::cout << "Total time: " << end - start << "ms\n";
-   std::cout << "Seeds per second: " << std::fixed << std::setprecision(0)
-             << 10000000 / ((end - start) / 1000.0) << "\n";
+  std::cout << "----SINGLE THREADED PO----\n";
+  std::cout << "Total time: " << end - start << "ms\n";
+  std::cout << "Seeds per second: " << std::fixed << std::setprecision(0)
+            << 10000000 / ((end - start) / 1000.0) << "\n";
 }
 
 void benchmark_blank() {
@@ -208,11 +210,6 @@ void benchmark_blank() {
   std::cout << "Total time: " << end - start << "ms\n";
   std::cout << "Seeds per second: " << std::fixed << std::setprecision(0)
             << 100000000 / ((end - start) / 1000.0) << "\n";
-}
-
-void run_filter(std::function<int(Instance)> f) {
-  Search search(f, 12);
-  search.search();
 }
 
 int main() {
