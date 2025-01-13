@@ -50,12 +50,8 @@ cmake --build build --config Release
 ```
 
 ## Future Plans
+- SIMD
 - CLI
 - custom filters with JSON
 - add all unimplemented sources
 - compatibility with modded items?
-
-## TODO Optimizations
-- Thanks to @Tacodiva for alerting me to some of these
-- searching: don't reinitialize instances, don't reconvert int to string, allocate heap memory beforehand, allocate seeds better [use recursive approach to precompute hashes]
-- pseudohash: cache multiples of pi, optimize first step without dividing by num?
