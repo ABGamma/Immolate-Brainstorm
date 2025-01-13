@@ -1,3 +1,5 @@
+#ifndef SIMD_HPP
+#define SIMD_HPP
 /*
 NOTE!!!
 If running on Windows, find & replace
@@ -8,6 +10,7 @@ If running on Windows, find & replace
 #include<cstdint>
 #include<immintrin.h>
 using State = std::array<std::uint64_t,32>;
+// I added a fallback for this and am now getting a cryptic linker error
 extern "C" void ljseed(State* state, __m512d seed);
 asm(R"-(
 .section .text
@@ -70,3 +73,5 @@ MASK4:
 
 .section .text
 )-");
+
+#endif //SIMD_HPP

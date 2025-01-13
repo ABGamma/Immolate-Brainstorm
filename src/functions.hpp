@@ -1,6 +1,11 @@
 #ifndef FUNCTIONS_HPP
 #define FUNCTIONS_HPP
 
+#if (defined(__GNUC__) || defined(__clang__)) && defined(__AVX512F__)
+#include "simd.hpp"
+// From here, SIMD_HPP will be used to check if SIMD is enabled
+#endif
+
 #include "instance.hpp"
 #include "rng.hpp"
 #include <string>

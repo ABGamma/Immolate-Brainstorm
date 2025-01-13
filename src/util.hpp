@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstdint>
 #include <string>
+#include <array>
 
 const uint64_t MAX_UINT64 = 18446744073709551615ull;
 
@@ -43,8 +44,6 @@ double pseudostep(char s, int pos, double num);
 std::string anteToString(int a);
 double round13(double x);
 
-#if (defined(__GNUC__) || defined(__clang__)) && defined(__AVX512F__)
-#include <array>
 typedef union DoubleLongSIMD {
   std::array<double,8> dbl;
   std::array<uint64_t,8> ulong;
@@ -58,6 +57,5 @@ struct LuaRandomSIMD {
   std::array<double,8> random();
   std::array<int,8> randint(int min, int max);
 };
-#endif
 
 #endif // UTIL_HPP

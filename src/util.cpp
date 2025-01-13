@@ -1,6 +1,7 @@
 #include "util.hpp"
 #include <cstring>
 #include <limits>
+#include <array>
 
 LuaRandom::LuaRandom(double seed) {
   double d = seed;
@@ -177,13 +178,25 @@ double round13(double x) {
   return std::floor(x * inv_prec) / inv_prec;
 }
 
-//SIMD-related util functions
-//requires GCC (and Linux for now)
-#if (defined(__GNUC__) || defined(__clang__)) && defined(__AVX512F__)
-#include "simd.hpp"
-#include <array>
 LuaRandomSIMD::LuaRandomSIMD(std::array<double,8> seed) {
-  ljseed(&state, _mm512_loadu_pd(seed.data()));
+  #ifdef SIMD_HPP
+    jseed(&state, _mm512_loadu_pd(seed.data()));
+  #else
+    for (int m = 0; m < 8; m++) {
+      double d = seed[m];
+      uint64_t r = 0x11090601;
+      for (int i = 0; i < 4; i++) {
+        uint64_t m = 1ull << (r & 255);
+        r >>= 8;
+        d = d * 3.14159265358979323846 + 2.7182818284590452354;
+        dbllong u;
+        u.dbl = d;
+        if (u.ulong < m)
+          u.ulong += m;
+        state[m*4+i] = u.ulong;
+      }
+    }
+  #endif
   for (int i = 0; i < 10; i++) {
     _randint();
   }
@@ -242,4 +255,3 @@ std::array<int,8> LuaRandomSIMD::randint(int min, int max) {
   }
   return output;
 }
-#endif
