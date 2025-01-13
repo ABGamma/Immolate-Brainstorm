@@ -3,11 +3,10 @@
 #include "util.hpp"
 #include <map>
 #include <string>
-#include <unordered_map>
 #pragma once
 
 struct Cache {
-  std::unordered_map<std::string, double> nodes;
+  std::map<std::string, double> nodes;
   bool generatedFirstPack = false;
 };
 
@@ -51,7 +50,7 @@ struct Instance {
     hashedSeed = s.pseudohash(0);
     params = InstParams();
     cache.nodes
-        .clear(); // Somehow `clear` is faster than swapping with empty map
+      .clear(); // Somehow `clear` is faster than swapping with empty map
     cache.generatedFirstPack = false;
   };
   void next() {
@@ -61,7 +60,6 @@ struct Instance {
     cache.nodes.clear();
     cache.generatedFirstPack = false;
   }
-
   double get_node(std::string ID) {
     if (cache.nodes.count(ID) == 0) {
       cache.nodes[ID] = pseudohash_from(ID, seed.pseudohash(ID.length()));
@@ -70,7 +68,6 @@ struct Instance {
         round13(fract(cache.nodes[ID] * 1.72431234 + 2.134453429141));
     return (cache.nodes[ID] + hashedSeed) / 2;
   }
-
   double random(std::string ID) {
     rng = LuaRandom(get_node(ID));
     return rng.random();
