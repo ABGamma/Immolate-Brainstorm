@@ -66,6 +66,15 @@ long filter_negative_tag(Instance inst) {
   return score;
 }
 
+long filter_lucky(Instance inst) {
+  for (int i = 0; i < 7; i++) {
+    if (inst.random(RandomType::Lucky_Money) >= 1.0/15) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
 long filter_suas_speedrun(Instance inst) {
   // First four cards in shop must include Mr. Bones, Merry Andy, and Luchador
   bool bones = false, andy = false, luchador = false;
@@ -177,6 +186,24 @@ void benchmark_quick() {
             << 100000000 / ((end - start) / 1000.0) << "\n";
 }
 
+void benchmark_quick_lucky() {
+  long total = 0;
+  long start = std::chrono::duration_cast<std::chrono::milliseconds>(
+                   std::chrono::system_clock::now().time_since_epoch())
+                   .count();
+  Search search(filter_lucky, "IMMOLATE", 12, 100000000);
+  search.highScore = 10; // No output
+  search.printDelay = 100000000000;
+  search.search();
+  long end = std::chrono::duration_cast<std::chrono::milliseconds>(
+                 std::chrono::system_clock::now().time_since_epoch())
+                 .count();
+  std::cout << "-------LUCKY CARDS-------\n";
+  std::cout << "Total time: " << end - start << "ms\n";
+  std::cout << "Seeds per second: " << std::fixed << std::setprecision(0)
+            << 100000000 / ((end - start) / 1000.0) << "\n";
+}
+
 void benchmark_single() {
   long total = 0;
   long start = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -215,6 +242,7 @@ void benchmark_blank() {
 int main() {
   benchmark_single();
   benchmark_quick();
+  benchmark_quick_lucky();
   benchmark_blank();
   benchmark();
   return 1;
