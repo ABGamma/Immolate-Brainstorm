@@ -176,3 +176,70 @@ double round13(double x) {
   }
   return std::floor(x * inv_prec) / inv_prec;
 }
+
+//SIMD-related util functions
+//requires GCC (and Linux for now)
+#if (defined(__GNUC__) || defined(__clang__)) && defined(__AVX512F__)
+#include "simd.hpp"
+#include <array>
+LuaRandomSIMD::LuaRandomSIMD(std::array<double,8> seed) {
+  ljseed(&state, _mm512_loadu_pd(seed.data()));
+  for (int i = 0; i < 10; i++) {
+    _randint();
+  }
+}
+LuaRandomSIMD::LuaRandomSIMD() { LuaRandomSIMD({0,0,0,0,0,0,0,0}); }
+
+std::array<uint64_t,8> LuaRandomSIMD::_randint() {
+  std::array<uint64_t,8> output;
+  for (int i = 0; i < 8; i++) {
+    uint64_t z = 0;
+    uint64_t r = 0;
+    z = state[i*4];
+    z = (((z << 31ull) ^ z) >> 45ull) ^ ((z & (MAX_UINT64 << 1ull)) << 18ull);
+    r ^= z;
+    state[i*4] = z;
+    z = state[i*4+1];
+    z = (((z << 19ull) ^ z) >> 30ull) ^ ((z & (MAX_UINT64 << 6ull)) << 28ull);
+    r ^= z;
+    state[i*4+1] = z;
+    z = state[i*4+2];
+    z = (((z << 24ull) ^ z) >> 48ull) ^ ((z & (MAX_UINT64 << 9ull)) << 7ull);
+    r ^= z;
+    state[i*4+2] = z;
+    z = state[i*4+3];
+    z = (((z << 21ull) ^ z) >> 39ull) ^ ((z & (MAX_UINT64 << 17ull)) << 8ull);
+    r ^= z;
+    state[i*4+3] = z;
+    output[i] = r;
+  }
+  return output;
+}
+
+std::array<uint64_t,8> LuaRandomSIMD::randdblmem() {
+  std::array<uint64_t,8> output = _randint();
+  for (int i = 0; i < 8; i++) {
+    output[i] = (output[i] & 4503599627370495ull) | 4607182418800017408ull;
+  }
+  return output;
+}
+
+std::array<double,8> LuaRandomSIMD::random() {
+  dbllongSIMD u;
+  u.ulong = randdblmem();
+  std::array<double,8> output = u.dbl;
+  for (int i = 0; i < 8; i++) {
+    output[i] -= 1.0;
+  }
+  return output;
+}
+
+std::array<int,8> LuaRandomSIMD::randint(int min, int max) {
+  std::array<double,8> rands = random();
+  std::array<int,8> output;
+  for (int i = 0; i < 8; i++) {
+    output[i] = (int)(rands[i] * (max - min + 1)) + min;
+  }
+  return output;
+}
+#endif

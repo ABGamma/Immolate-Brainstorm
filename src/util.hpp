@@ -43,4 +43,21 @@ double pseudostep(char s, int pos, double num);
 std::string anteToString(int a);
 double round13(double x);
 
+#if (defined(__GNUC__) || defined(__clang__)) && defined(__AVX512F__)
+#include <array>
+typedef union DoubleLongSIMD {
+  std::array<double,8> dbl;
+  std::array<uint64_t,8> ulong;
+} dbllongSIMD;
+struct LuaRandomSIMD {
+  std::array<std::uint64_t,32> state;
+  LuaRandomSIMD(std::array<double,8> seed);
+  LuaRandomSIMD();
+  std::array<uint64_t,8> _randint();
+  std::array<uint64_t,8> randdblmem();
+  std::array<double,8> random();
+  std::array<int,8> randint(int min, int max);
+};
+#endif
+
 #endif // UTIL_HPP
