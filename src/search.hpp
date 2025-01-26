@@ -26,7 +26,7 @@ public:
     std::atomic<bool> found{false}; // Atomic flag to signal when a solution is found
     Seed foundSeed; // Store the found seed
     bool exitOnFind = false;
-    long startSeed;
+    long long startSeed;
     int numThreads;
     long long numSeeds;
     std::mutex mtx;
