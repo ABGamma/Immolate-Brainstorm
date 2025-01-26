@@ -26,7 +26,7 @@ public:
     std::atomic<bool> found{false}; // Atomic flag to signal when a solution is found
     Seed foundSeed; // Store the found seed
     bool exitOnFind = false;
-    Seed startSeed;
+    long startSeed;
     int numThreads;
     long long numSeeds;
     std::mutex mtx;
@@ -34,27 +34,27 @@ public:
 
     Search(std::function<int(Instance)> f) {
         filter = f;
-        startSeed = Seed(0);
+        startSeed = 0;
         numThreads = 1;
         numSeeds = 2318107019761;
     }
 
     Search(std::function<int(Instance)> f, int t) {
         filter = f;
-        startSeed = Seed(0);
+        startSeed = 0;
         numThreads = t;
         numSeeds = 2318107019761;
     }
     
     Search(std::function<int(Instance)> f, int t, long long n) {
       filter = f;
-      startSeed = Seed(0);
+      startSeed = 0;
       numThreads = t;
       numSeeds = n;
     };
     Search(std::function<int(Instance)> f, std::string seed, int t, long long n) {
       filter = f;
-      startSeed = Seed(0);
+      startSeed = Seed(seed).getID();
       numThreads = t;
       numSeeds = n;
     };
@@ -93,8 +93,8 @@ public:
                 while (true) {
                     long long block = nextBlock.fetch_add(1);
                     if (block >= totalBlocks) break;
-                    long long start = block * BLOCK_SIZE;
-                    long long end = std::min(start + BLOCK_SIZE, numSeeds);
+                    long long start = block * BLOCK_SIZE + startSeed;
+                    long long end = std::min(start + BLOCK_SIZE, numSeeds + startSeed);
                     searchBlock(start, end);
                 }
             });

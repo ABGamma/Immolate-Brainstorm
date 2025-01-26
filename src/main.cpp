@@ -106,6 +106,35 @@ long filter_suas_speedrun(Instance inst) {
   return 3;
 }
 
+long filter_cavendish(Instance inst) {
+  inst.initLocks(1, false, false);
+  // Check for a Charm Tag (Arcana Pack)
+  if (inst.nextTag(1) != Item::Charm_Tag)
+    return 0;
+  // Check for a Judgement within that pack
+  std::vector<Item> packContents = inst.nextArcanaPack(5, 1);
+  bool hasJudgement = false;
+  for (int i = 0; i < 5; i++) {
+    if (packContents[i] == Item::Judgement)
+      hasJudgement = true;
+  }
+  if (!hasJudgement)
+    return 1;
+  // Check for Gros Michel
+  if (inst.nextJoker(ItemSource::Judgement, 1, false).joker != Item::Gros_Michel)
+    return 2;
+  // Check for Gros Michel break
+  if (inst.random(RandomType::Gros_Michel) >= 1.0/6)
+    return 3;
+  // Check for Cavendish in first shop
+  if (inst.nextShopItem(1).item != Item::Cavendish || inst.nextShopItem(1).item != Item::Cavendish)
+    return 4;
+  // Check for Cavendish break
+  if (inst.random(RandomType::Cavendish) < 1.0/1000)
+    return 9999;
+  return 5;
+}
+
 long filter_blank(Instance inst) { return 0; }
 
 // These won't be permanent filters, just ones I sub in and out while JSON
@@ -240,10 +269,14 @@ void benchmark_blank() {
 }
 
 int main() {
-  benchmark_single();
+  /*benchmark_single();
   benchmark_quick();
   benchmark_quick_lucky();
   benchmark_blank();
-  benchmark();
+  benchmark();*/
+  Search search(filter_cavendish, "11111J31", 8, 2318107019761);
+  search.highScore = 5;
+  search.printDelay = 2318107019761;
+  search.search();
   return 1;
 }
