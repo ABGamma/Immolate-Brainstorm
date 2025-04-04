@@ -6,7 +6,7 @@
 template <typename VectorType, typename NumberType>
 void perform_operations() {
     VectorType a({1,2,3,4,5,6,7,8});
-    VectorType b({8,7,6,5,4,3,2,1});
+    VectorType b({9,8,7,6,5,4,3,2});
     VectorType _add = a + b;
     VectorType _sub = a - b;
     VectorType _mul = a * b;

@@ -538,8 +538,13 @@ struct VectorInt {
         #ifdef __AVX512F__
             avx512_data = _mm512_mullo_epi64(avx512_data, other.avx512_data);
         #elif __AVX2__
-            avx2_data[0] = _mm256_mullo_epi64(avx2_data[0], other.avx2_data[0]);
-            avx2_data[1] = _mm256_mullo_epi64(avx2_data[1], other.avx2_data[1]);
+            __m256i low0 = _mm256_mul_epu32(avx2_data[0], other.avx2_data[0]);
+            __m256i high0 = _mm256_mul_epu32(_mm256_srli_epi64(avx2_data[0], 32), _mm256_srli_epi64(other.avx2_data[0], 32));
+            avx2_data[0] = _mm256_blend_epi32(low0, _mm256_slli_epi64(high0, 32), 0xAA);
+
+            __m256i low1 = _mm256_mul_epu32(avx2_data[1], other.avx2_data[1]);
+            __m256i high1 = _mm256_mul_epu32(_mm256_srli_epi64(avx2_data[1], 32), _mm256_srli_epi64(other.avx2_data[1], 32));
+            avx2_data[1] = _mm256_blend_epi32(low1, _mm256_slli_epi64(high1, 32), 0xAA);
         #else
             for (int i = 0; i < 8; ++i) {
                 data[i] *= other.data[i];
@@ -566,8 +571,8 @@ struct VectorInt {
         #ifdef __AVX512F__
             result.avx512_data = _mm512_and_epi64(avx512_data, other.avx512_data);
         #elif __AVX2__
-            result.avx2_data[0] = _mm256_and_epi64(avx2_data[0], other.avx2_data[0]);
-            result.avx2_data[1] = _mm256_and_epi64(avx2_data[1], other.avx2_data[1]);
+            result.avx2_data[0] = _mm256_and_si256(avx2_data[0], other.avx2_data[0]);
+            result.avx2_data[1] = _mm256_and_si256(avx2_data[1], other.avx2_data[1]);
         #else
             for (int i = 0; i < 8; ++i) {
                 result.data[i] = data[i] & other.data[i];
@@ -580,8 +585,8 @@ struct VectorInt {
         #ifdef __AVX512F__
             result.avx512_data = _mm512_or_epi64(avx512_data, other.avx512_data);
         #elif __AVX2__
-            result.avx2_data[0] = _mm256_or_epi64(avx2_data[0], other.avx2_data[0]);
-            result.avx2_data[1] = _mm256_or_epi64(avx2_data[1], other.avx2_data[1]);
+            result.avx2_data[0] = _mm256_or_si256(avx2_data[0], other.avx2_data[0]);
+            result.avx2_data[1] = _mm256_or_si256(avx2_data[1], other.avx2_data[1]);
         #else
             for (int i = 0; i < 8; ++i) {
                 result.data[i] = data[i] | other.data[i];
@@ -594,8 +599,8 @@ struct VectorInt {
         #ifdef __AVX512F__
             result.avx512_data = _mm512_xor_epi64(avx512_data, other.avx512_data);
         #elif __AVX2__
-            result.avx2_data[0] = _mm256_xor_epi64(avx2_data[0], other.avx2_data[0]);
-            result.avx2_data[1] = _mm256_xor_epi64(avx2_data[1], other.avx2_data[1]);
+            result.avx2_data[0] = _mm256_xor_si256(avx2_data[0], other.avx2_data[0]);
+            result.avx2_data[1] = _mm256_xor_si256(avx2_data[1], other.avx2_data[1]);
         #else
             for (int i = 0; i < 8; ++i) {
                 result.data[i] = data[i] ^ other.data[i];
@@ -607,8 +612,8 @@ struct VectorInt {
         #ifdef __AVX512F__
             avx512_data = _mm512_and_epi64(avx512_data, other.avx512_data);
         #elif __AVX2__
-            avx2_data[0] = _mm256_and_epi64(avx2_data[0], other.avx2_data[0]);
-            avx2_data[1] = _mm256_and_epi64(avx2_data[1], other.avx2_data[1]);
+            avx2_data[0] = _mm256_and_si256(avx2_data[0], other.avx2_data[0]);
+            avx2_data[1] = _mm256_and_si256(avx2_data[1], other.avx2_data[1]);
         #else
             for (int i = 0; i < 8; ++i) {
                 data[i] &= other.data[i];
@@ -620,8 +625,8 @@ struct VectorInt {
         #ifdef __AVX512F__
             avx512_data = _mm512_or_epi64(avx512_data, other.avx512_data);
         #elif __AVX2__
-            avx2_data[0] = _mm256_or_epi64(avx2_data[0], other.avx2_data[0]);
-            avx2_data[1] = _mm256_or_epi64(avx2_data[1], other.avx2_data[1]);
+            avx2_data[0] = _mm256_or_si256(avx2_data[0], other.avx2_data[0]);
+            avx2_data[1] = _mm256_or_si256(avx2_data[1], other.avx2_data[1]);
         #else
             for (int i = 0; i < 8; ++i) {
                 data[i] |= other.data[i];
@@ -633,8 +638,8 @@ struct VectorInt {
         #ifdef __AVX512F__
             avx512_data = _mm512_xor_epi64(avx512_data, other.avx512_data);
         #elif __AVX2__
-            avx2_data[0] = _mm256_xor_epi64(avx2_data[0], other.avx2_data[0]);
-            avx2_data[1] = _mm256_xor_epi64(avx2_data[1], other.avx2_data[1]);
+            avx2_data[0] = _mm256_xor_si256(avx2_data[0], other.avx2_data[0]);
+            avx2_data[1] = _mm256_xor_si256(avx2_data[1], other.avx2_data[1]);
         #else
             for (int i = 0; i < 8; ++i) {
                 data[i] ^= other.data[i];
@@ -648,8 +653,8 @@ struct VectorInt {
         #ifdef __AVX512F__
             result.avx512_data = _mm512_cmpeq_epi64_mask(avx512_data, other.avx512_data);
         #elif __AVX2__
-            result.data[0] = _mm256_cmpeq_epi64_mask(avx2_data[0], other.avx2_data[0]);
-            result.data[1] = _mm256_cmpeq_epi64_mask(avx2_data[1], other.avx2_data[1]);
+            result.avx2_data[0] = _mm256_cmpeq_epi64(avx2_data[0], other.avx2_data[0]);
+            result.avx2_data[1] = _mm256_cmpeq_epi64(avx2_data[1], other.avx2_data[1]);
         #else
             for (int i = 0; i < 8; ++i) {
                 result.data[i] = data[i] == other.data[i];
@@ -662,8 +667,9 @@ struct VectorInt {
         #ifdef __AVX512F__
             result.avx512_data = _mm512_cmpneq_epi64_mask(avx512_data, other.avx512_data);
         #elif __AVX2__
-            result.data[0] = _mm256_cmpneq_epi64_mask(avx2_data[0], other.avx2_data[0]);
-            result.data[1] = _mm256_cmpneq_epi64_mask(avx2_data[1], other.avx2_data[1]);
+            VectorInt eq = (*this == other);
+            result.avx2_data[0] = _mm256_xor_si256(eq.avx2_data[0], _mm256_set1_epi64x(-1));
+            result.avx2_data[1] = _mm256_xor_si256(eq.avx2_data[1], _mm256_set1_epi64x(-1));
         #else
             for (int i = 0; i < 8; ++i) {
                 result.data[i] = data[i] != other.data[i];
@@ -676,8 +682,8 @@ struct VectorInt {
         #ifdef __AVX512F__
             result.avx512_data = _mm512_cmplt_epi64_mask(avx512_data, other.avx512_data);
         #elif __AVX2__
-            result.data[0] = _mm256_cmplt_epi64_mask(avx2_data[0], other.avx2_data[0]);
-            result.data[1] = _mm256_cmplt_epi64_mask(avx2_data[1], other.avx2_data[1]);
+            result.avx2_data[0] = _mm256_cmpgt_epi64(other.avx2_data[0], avx2_data[0]);
+            result.avx2_data[1] = _mm256_cmpgt_epi64(other.avx2_data[1], avx2_data[1]);
         #else
             for (int i = 0; i < 8; ++i) {
                 result.data[i] = data[i] < other.data[i];
@@ -690,8 +696,10 @@ struct VectorInt {
         #ifdef __AVX512F__
             result.avx512_data = _mm512_cmple_epi64_mask(avx512_data, other.avx512_data);
         #elif __AVX2__
-            result.data[0] = _mm256_cmple_epi64_mask(avx2_data[0], other.avx2_data[0]);
-            result.data[1] = _mm256_cmple_epi64_mask(avx2_data[1], other.avx2_data[1]);
+            VectorInt lt = (*this < other);
+            VectorInt eq = (*this == other);
+            result.avx2_data[0] = _mm256_or_si256(lt.avx2_data[0], eq.avx2_data[0]);
+            result.avx2_data[1] = _mm256_or_si256(lt.avx2_data[1], eq.avx2_data[1]);
         #else
             for (int i = 0; i < 8; ++i) {
                 result.data[i] = data[i] <= other.data[i];
@@ -704,8 +712,8 @@ struct VectorInt {
         #ifdef __AVX512F__
             result.avx512_data = _mm512_cmpgt_epi64_mask(avx512_data, other.avx512_data);
         #elif __AVX2__
-            result.data[0] = _mm256_cmpgt_epi64_mask(avx2_data[0], other.avx2_data[0]);
-            result.data[1] = _mm256_cmpgt_epi64_mask(avx2_data[1], other.avx2_data[1]);
+            result.avx2_data[0] = _mm256_cmpgt_epi64(avx2_data[0], other.avx2_data[0]);
+            result.avx2_data[1] = _mm256_cmpgt_epi64(avx2_data[1], other.avx2_data[1]);
         #else
             for (int i = 0; i < 8; ++i) {
                 result.data[i] = data[i] > other.data[i];
@@ -718,8 +726,10 @@ struct VectorInt {
         #ifdef __AVX512F__
             result.avx512_data = _mm512_cmpge_epi64_mask(avx512_data, other.avx512_data);
         #elif __AVX2__
-            result.data[0] = _mm256_cmpge_epi64_mask(avx2_data[0], other.avx2_data[0]);
-            result.data[1] = _mm256_cmpge_epi64_mask(avx2_data[1], other.avx2_data[1]);
+            VectorInt gt = (*this > other);
+            VectorInt eq = (*this == other);
+            result.avx2_data[0] = _mm256_or_si256(gt.avx2_data[0], eq.avx2_data[0]);
+            result.avx2_data[1] = _mm256_or_si256(gt.avx2_data[1], eq.avx2_data[1]);
         #else
             for (int i = 0; i < 8; ++i) {
                 result.data[i] = data[i] >= other.data[i];
