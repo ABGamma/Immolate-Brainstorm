@@ -3,23 +3,23 @@
 #include <iostream>
 #include <chrono>
 
-int main() {
-    // Add two vectors
-    Vector a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0});
-    Vector b({8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0});
-    Vector _add = a + b;
-    Vector _sub = a - b;
-    Vector _mul = a * b;
-    Vector _div = a / b;
-    Vector _and = a & b;
-    Vector _or = a | b;
-    Vector _xor = a ^ b;
-    Vector _eq = a == b;
-    Vector _neq = a != b;
-    Vector _lt = a < b;
-    Vector _gt = a > b;
-    Vector _lte = a <= b;
-    Vector _gte = a >= b;
+template <typename VectorType, typename NumberType>
+void perform_operations() {
+    VectorType a({1,2,3,4,5,6,7,8});
+    VectorType b({8,7,6,5,4,3,2,1});
+    VectorType _add = a + b;
+    VectorType _sub = a - b;
+    VectorType _mul = a * b;
+    VectorType _div = a / b;
+    VectorType _and = a & b;
+    VectorType _or = a | b;
+    VectorType _xor = a ^ b;
+    VectorType _eq = a == b;
+    VectorType _neq = a != b;
+    VectorType _lt = a < b;
+    VectorType _gt = a > b;
+    VectorType _lte = a <= b;
+    VectorType _gte = a >= b;
     std::cout << "a = " << a.to_string() << std::endl;
     std::cout << "b = " << b.to_string() << std::endl;
     std::cout << "a + b = " << _add.to_string() << std::endl;
@@ -37,8 +37,8 @@ int main() {
     std::cout << "a >= b = " << _gte.to_string() << std::endl;
 
     // Speed test, add 1M vectors and time it
-    Vector c({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0});
-    Vector d({8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0});
+    VectorType c({1,2,3,4,5,6,7,8});
+    VectorType d({8,7,6,5,4,3,2,1});
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 1000000000; ++i) {
         c += d;
@@ -48,8 +48,8 @@ int main() {
     std::cout << "c = " << c.to_string() << std::endl;
 
     //Compare with just numbers
-    double e[] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
-    double f[] = {8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0};
+    NumberType e[] = {1,2,3,4,5,6,7,8};
+    NumberType f[] = {8,7,6,5,4,3,2,1};
     start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 1000000000; ++i) {
         for (int j = 0; j < 8; ++j) {
@@ -64,5 +64,16 @@ int main() {
         if (i < 7) std::cout << ", ";
     }
     std::cout << "]" << std::endl;
+}
+
+int main() {
+    std::cout << "\nTesting with VectorInt (integer):" << std::endl;
+    // I used AI and some of its AVX2 choices don't actually work with AVX2...
+    // This will need more fixing later
+    perform_operations<VectorInt,uint64_t>();
+
+    std::cout << "Testing with Vector (floating-point):" << std::endl;
+    perform_operations<Vector,double>();
+
     return 0;
 }
