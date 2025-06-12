@@ -66,7 +66,7 @@ long filter(Instance inst) {
     }
     if (BRAINSTORM_EARLYCOPY) {
         long score = 0;
-		bool money = false;
+        bool money = false;
         bool bstorm = false;
         bool bprint = false;
         Pack pack = packInfo(inst.nextPack(1));
@@ -75,7 +75,7 @@ long filter(Instance inst) {
                 auto packContents = inst.nextBuffoonPack(pack.size, 1);
                 for (int x = 0; x < pack.size; x++) {
                     if (packContents[x].joker == Item::Blueprint && !bprint) {
-						bprint = true;
+                        bprint = true;
                         break;
                     }
                     if ((packContents[x].joker == Item::Mail_In_Rebate || packContents[x].joker == Item::Reserved_Parking || packContents[x].joker == Item::Business_Card || packContents[x].joker == Item::To_Do_List || packContents[x].joker == Item::Midas_Mask || packContents[x].joker == Item::Trading_Card) && !money) {
@@ -83,7 +83,7 @@ long filter(Instance inst) {
                         break;
                     }
                     if (packContents[x].joker == Item::Brainstorm && !bstorm) {
-						bstorm = true;
+                        bstorm = true;
                         break;
                     }
                 }
@@ -92,13 +92,13 @@ long filter(Instance inst) {
                 auto packContents = inst.nextBuffoonPack(pack.size, 1);
                 for (int x = 0; x < pack.size; x++) {
                     if (packContents[x].joker == Item::Blueprint) {
-						bprint = true;
+                        bprint = true;
                     }
                     if ((packContents[x].joker == Item::Mail_In_Rebate || packContents[x].joker == Item::Reserved_Parking || packContents[x].joker == Item::Business_Card || packContents[x].joker == Item::To_Do_List || packContents[x].joker == Item::Midas_Mask || packContents[x].joker == Item::Trading_Card) && !money) {
-						money = true;
+                        money = true;
                     }
                     if (packContents[x].joker == Item::Brainstorm) {
-						bstorm = true;
+                        bstorm = true;
                     }
                 }
             }
@@ -108,19 +108,20 @@ long filter(Instance inst) {
             ShopItem item = inst.nextShopItem(1);
             if (item.joker == Item::Blueprint && !bprint) {
                 bprint = true;
-			}
+            }
             if ((item.joker == Item::Mail_In_Rebate || item.joker == Item::Reserved_Parking || item.joker == Item::Business_Card || item.joker == Item::To_Do_List || item.joker == Item::Midas_Mask || item.joker == Item::Trading_Card) && !money) {
                 money = true;
             }
             if (item.joker == Item::Brainstorm && !bstorm) {
-				bstorm = true;
-        }
-        if (!bprint || !money || !bstorm) {
-            return 0; // If any of the required items are not found, return 0
-        }
+                bstorm = true;
+            }
+            if (!bprint || !money || !bstorm) {
+                return 0; // If any of the required items are not found, return 0
+            }
 
-        
-	}
+
+        }
+    }
     
     return 1; // Return a score of 1 if all conditions are met
 };
