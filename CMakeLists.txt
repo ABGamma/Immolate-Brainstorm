@@ -41,7 +41,7 @@ endif()
 # Output compile_commands.json for clangd stuff
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_library(${PROJECT_NAME} STATIC ${LIB_SOURCES})
+add_library(${PROJECT_NAME} SHARED ${LIB_SOURCES})
 
 # Define BUILDING_DLL when compiling the DLL
 target_compile_definitions(${PROJECT_NAME} PRIVATE BUILDING_DLL)
