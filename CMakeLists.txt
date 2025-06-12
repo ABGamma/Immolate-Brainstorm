@@ -10,6 +10,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(LIB_SOURCES
     src/functions.hpp
     src/instance.hpp
+    src/immolate.cpp
     src/items.cpp
     src/rng.cpp
     src/search.cpp
@@ -60,5 +61,5 @@ generate_export_header(${PROJECT_NAME}
     STATIC_DEFINE IMMOLATE_BUILT_AS_STATIC
 )
 
-add_executable(immol ${EXECUTABLE_SOURCES})
-target_link_libraries(immol ${PROJECT_NAME})
+#add_executable(immol ${EXECUTABLE_SOURCES})
+#target_link_libraries(immol ${PROJECT_NAME})

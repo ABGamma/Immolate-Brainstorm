@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <iostream>
 #include <vector>
+#include <chrono>
 
 long filter(Instance inst) {
   long legendaries = 0;

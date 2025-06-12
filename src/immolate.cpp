@@ -1,4 +1,6 @@
+#define IMMOLATE_API __declspec(dllexport)
 #include "functions.hpp"
+#include"immolate.hpp"
 #include "search.hpp"
 #include <cstring>
 
@@ -20,9 +22,11 @@ long filter(Instance inst) {
     }
     if (BRAINSTORM_SOULS > 0) {
         for (int i = 1; i <= BRAINSTORM_SOULS; i++) {
-            auto tarots = inst.nextArcanaPack(5, 1); //Mega Arcana Pack, assumed
-from a Charm Tag bool found_soul = false; for (int t = 0; t < 5; t++) { if
-(tarots[t] == Item::The_Soul) { found_soul = true; break;
+            auto tarots = inst.nextArcanaPack(5, 1); //Mega Arcana Pack, assumed from a Charm Tag 
+            bool found_soul = false; 
+            for (int t = 0; t < 5; t++) { 
+                if(tarots[t] == Item::The_Soul) { 
+                    found_soul = true; break;
                 }
             }
             if (!found_soul) {
