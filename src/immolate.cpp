@@ -73,7 +73,7 @@ std::string brainstorm_cpp(std::string seed, std::string voucher, std::string pa
     BRAINSTORM_SOULS = souls;
     BRAINSTORM_OBSERVATORY = observatory;
     BRAINSTORM_PERKEO = perkeo;
-    Search search(filter, seed, 1, 100000000);
+    Search search(filter, seed, 12, 100000000);
     search.exitOnFind = true;
     return search.search();
 }
