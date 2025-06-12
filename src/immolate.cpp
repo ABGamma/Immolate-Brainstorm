@@ -7,7 +7,7 @@
 Item BRAINSTORM_PACK = Item::RETRY;
 Item BRAINSTORM_TAG = Item::Charm_Tag;
 Item BRAINSTORM_VOUCHER = Item::RETRY;
-long BRAINSTORM_SOULS = 1;
+double BRAINSTORM_SOULS = 1;
 bool BRAINSTORM_OBSERVATORY = false;
 bool BRAINSTORM_PERKEO = false;
 
@@ -48,23 +48,26 @@ long filter(Instance inst) {
     if (BRAINSTORM_OBSERVATORY) {
         if (inst.nextVoucher(1) == Item::Telescope) {
             inst.activateVoucher(Item::Telescope);
-            if (inst.nextVoucher(2) != Item::Observatory) return 0; else return 0;
+            if (inst.nextVoucher(2) != Item::Observatory) {
+                return 0;
+            }
         }
-        if (BRAINSTORM_PERKEO) {
-            int antes[5] = { 1, 1, 2, 2, 2 };
-            for (int i = 0; i < 5; i++) {
-                Pack pack = packInfo(inst.nextPack(antes[i]));
-                std::vector<Item> packContents;
-                if (pack.type == Item::Arcana_Pack) {
-                    packContents = inst.nextArcanaPack(pack.size, antes[i]);
-                }
-                else if (pack.type == Item::Spectral_Pack) {
-                    packContents = inst.nextSpectralPack(pack.size, antes[i]);
-                }
-                else continue;
-                for (int x = 0; x < pack.size; x++) {
-                    if (!(packContents[x] == Item::The_Soul && inst.nextJoker(ItemSource::Soul, antes[i], true).joker == Item::Perkeo)) return 0;
-                }
+        else return 0;
+    }
+    if (BRAINSTORM_PERKEO) {
+        int antes[5] = { 1, 1, 2, 2, 2 };
+        for (int i = 0; i < 5; i++) {
+            Pack pack = packInfo(inst.nextPack(antes[i]));
+            std::vector<Item> packContents;
+            if (pack.type == Item::Arcana_Pack) {
+                packContents = inst.nextArcanaPack(pack.size, antes[i]);
+            }
+            else if (pack.type == Item::Spectral_Pack) {
+                packContents = inst.nextSpectralPack(pack.size, antes[i]);
+            }
+            else continue;
+            for (int x = 0; x < pack.size; x++) {
+                if (!(packContents[x] == Item::The_Soul && inst.nextJoker(ItemSource::Soul, antes[i], true).joker == Item::Perkeo)) return 0;
             }
         }
     }
