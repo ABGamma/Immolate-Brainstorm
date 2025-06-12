@@ -104,10 +104,22 @@ long filter(Instance inst) {
             }
             pack = packInfo(inst.nextPack(1));
         }
-
+        for (int i = 0; i < 4; i++) {
+            ShopItem item = inst.nextShopItem(1);
+            if (item.joker == Item::Blueprint && !bprint) {
+                bprint = true;
+			}
+            if ((item.joker == Item::Mail_In_Rebate || item.joker == Item::Reserved_Parking || item.joker == Item::Business_Card || item.joker == Item::To_Do_List || item.joker == Item::Midas_Mask || item.joker == Item::Trading_Card) && !money) {
+                money = true;
+            }
+            if (item.joker == Item::Brainstorm && !bstorm) {
+				bstorm = true;
+        }
         if (!bprint || !money || !bstorm) {
             return 0; // If any of the required items are not found, return 0
-		}
+        }
+
+        
 	}
     
     return 1; // Return a score of 1 if all conditions are met
