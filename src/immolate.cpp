@@ -34,15 +34,23 @@ long filter(Instance inst) {
         for (int i = 1; i <= BRAINSTORM_SOULS; i++) {
             auto tarots = inst.nextArcanaPack(5, 1); //Mega Arcana Pack, assumed from a Charm Tag
             bool found_soul = false;
+			bool found_perkeo = false;
             for (int t = 0; t < 5; t++) {
                 if (tarots[t] == Item::The_Soul) {
                     found_soul = true;
+                    if (BRAINSTORM_PERKEO && inst.nextJoker(ItemSource::Soul, 1, true).joker == Item::Perkeo) {
+						found_perkeo = true;
+                        break;
+                    }
                     break;
                 }
             }
             if (!found_soul) {
                 return 0;
             }
+            if (BRAINSTORM_PERKEO && !found_perkeo) {
+                return 0; // If Perkeo is required but not found, return 0
+			}
         }
     }
     if (BRAINSTORM_OBSERVATORY) {
@@ -54,23 +62,7 @@ long filter(Instance inst) {
         }
         else return 0;
     }
-    if (BRAINSTORM_PERKEO) {
-        int antes[5] = { 1, 1, 2, 2, 2 };
-        for (int i = 0; i < 5; i++) {
-            Pack pack = packInfo(inst.nextPack(antes[i]));
-            std::vector<Item> packContents;
-            if (pack.type == Item::Arcana_Pack) {
-                packContents = inst.nextArcanaPack(pack.size, antes[i]);
-            }
-            else if (pack.type == Item::Spectral_Pack) {
-                packContents = inst.nextSpectralPack(pack.size, antes[i]);
-            }
-            else continue;
-            for (int x = 0; x < pack.size; x++) {
-                if (!(packContents[x] == Item::The_Soul && inst.nextJoker(ItemSource::Soul, antes[i], true).joker == Item::Perkeo)) return 0;
-            }
-        }
-    }
+    
     return 1; // Return a score of 1 if all conditions are met
 };
 
