@@ -106,13 +106,13 @@ long filter(Instance inst) {
         }
         for (int i = 0; i < 4; i++) {
             ShopItem item = inst.nextShopItem(1);
-            if (item.joker == Item::Blueprint && !bprint) {
+            if (item.item == Item::Blueprint && !bprint) {
                 bprint = true;
             }
-            if ((item.joker == Item::Mail_In_Rebate || item.joker == Item::Reserved_Parking || item.joker == Item::Business_Card || item.joker == Item::To_Do_List || item.joker == Item::Midas_Mask || item.joker == Item::Trading_Card) && !money) {
+            if ((item.item == Item::Mail_In_Rebate || item.item == Item::Reserved_Parking || item.item == Item::Business_Card || item.item == Item::To_Do_List || item.item == Item::Midas_Mask || item.item == Item::Trading_Card) && !money) {
                 money = true;
             }
-            if (item.joker == Item::Brainstorm && !bstorm) {
+            if (item.item == Item::Brainstorm && !bstorm) {
                 bstorm = true;
             }
             if (!bprint || !money || !bstorm) {
