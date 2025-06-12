@@ -10,6 +10,8 @@ Item BRAINSTORM_VOUCHER = Item::RETRY;
 double BRAINSTORM_SOULS = 1;
 bool BRAINSTORM_OBSERVATORY = false;
 bool BRAINSTORM_PERKEO = false;
+bool BRAINSTORM_EARLYCOPY = false; 
+bool BRAINSTORM_CRIMSONBEAN = false;
 
 long filter(Instance inst) {
     if (BRAINSTORM_PACK != Item::RETRY) {
@@ -62,29 +64,75 @@ long filter(Instance inst) {
         }
         else return 0;
     }
+    if (BRAINSTORM_EARLYCOPY) {
+        long score = 0;
+		bool money = false;
+        bool bstorm = false;
+        bool bprint = false;
+        Pack pack = packInfo(inst.nextPack(1));
+        for (int p = 0; p <= 3; p++) {
+            if (pack.type == Item::Buffoon_Pack || pack.type == Item::Jumbo_Buffoon_Pack) {
+                auto packContents = inst.nextBuffoonPack(pack.size, 1);
+                for (int x = 0; x < pack.size; x++) {
+                    if (packContents[x].joker == Item::Blueprint && !bprint) {
+						bprint = true;
+                        break;
+                    }
+                    if ((packContents[x].joker == Item::Mail_In_Rebate || packContents[x].joker == Item::Reserved_Parking || packContents[x].joker == Item::Business_Card || packContents[x].joker == Item::To_Do_List || packContents[x].joker == Item::Midas_Mask || packContents[x].joker == Item::Trading_Card) && !money) {
+                        money = true;
+                        break;
+                    }
+                    if (packContents[x].joker == Item::Brainstorm && !bstorm) {
+						bstorm = true;
+                        break;
+                    }
+                }
+            }
+            if (pack.type == Item::Mega_Buffoon_Pack) {
+                auto packContents = inst.nextBuffoonPack(pack.size, 1);
+                for (int x = 0; x < pack.size; x++) {
+                    if (packContents[x].joker == Item::Blueprint) {
+						bprint = true;
+                    }
+                    if ((packContents[x].joker == Item::Mail_In_Rebate || packContents[x].joker == Item::Reserved_Parking || packContents[x].joker == Item::Business_Card || packContents[x].joker == Item::To_Do_List || packContents[x].joker == Item::Midas_Mask || packContents[x].joker == Item::Trading_Card) && !money) {
+						money = true;
+                    }
+                    if (packContents[x].joker == Item::Brainstorm) {
+						bstorm = true;
+                    }
+                }
+            }
+            pack = packInfo(inst.nextPack(1));
+        }
+
+        if (!bprint || !money || !bstorm) {
+            return 0; // If any of the required items are not found, return 0
+		}
+	}
     
     return 1; // Return a score of 1 if all conditions are met
 };
 
-std::string brainstorm_cpp(std::string seed, std::string voucher, std::string pack, std::string tag, double souls, bool observatory, bool perkeo) {
+std::string brainstorm_cpp(std::string seed, std::string voucher, std::string pack, std::string tag, double souls, bool observatory, bool perkeo, bool copymoney) {
     BRAINSTORM_PACK = stringToItem(pack);
     BRAINSTORM_TAG = stringToItem(tag);
     BRAINSTORM_VOUCHER = stringToItem(voucher);
     BRAINSTORM_SOULS = souls;
     BRAINSTORM_OBSERVATORY = observatory;
     BRAINSTORM_PERKEO = perkeo;
+	BRAINSTORM_EARLYCOPY = copymoney;
     Search search(filter, seed, 12, 100000000);
     search.exitOnFind = true;
     return search.search();
 }
 
 extern "C" {
-    const char* brainstorm(const char* seed, const char* voucher, const char* pack, const char* tag, double souls, bool observatory, bool perkeo) {
+    const char* brainstorm(const char* seed, const char* voucher, const char* pack, const char* tag, double souls, bool observatory, bool perkeo, bool copymoney) {
         std::string cpp_seed(seed);
         std::string cpp_pack(pack);
         std::string cpp_voucher(voucher);
         std::string cpp_tag(tag);
-        std::string result = brainstorm_cpp(cpp_seed, cpp_voucher, cpp_pack, cpp_tag, souls, observatory, perkeo);
+        std::string result = brainstorm_cpp(cpp_seed, cpp_voucher, cpp_pack, cpp_tag, souls, observatory, perkeo, copymoney);
 
         char* c_result = (char*)malloc(result.length() + 1);
         strcpy(c_result, result.c_str());
