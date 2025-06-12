@@ -19,7 +19,7 @@ long filter(Instance inst) {
         }
     }
 
-    if (BRAINSTORM_VOUCHER != Item::RETRY) {
+    if (BRAINSTORM_VOUCHER != Item::RETRY && !BRAINSTORM_OBSERVATORY) {
         if (inst.nextVoucher(1) != BRAINSTORM_VOUCHER) {
             return 0;
         }
