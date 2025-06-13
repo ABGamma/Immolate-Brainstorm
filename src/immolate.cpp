@@ -160,7 +160,7 @@ long filter(Instance inst) {
                 }
             }
 		}
-        if!burglar) {
+        if(!burglar) {
             return 0; // If Burglar is not found, return 0
         }
     }
