@@ -12,6 +12,8 @@ bool BRAINSTORM_OBSERVATORY = false;
 bool BRAINSTORM_PERKEO = false;
 bool BRAINSTORM_EARLYCOPY = false; 
 bool BRAINSTORM_RETCON = false;
+bool BRAINSTORM_ANTE8_BEAN = false;
+bool BRAINSTORM_ANTE6_BURGLAR = false;
 
 long filter(Instance inst) {
     if (BRAINSTORM_PACK != Item::RETRY) {
@@ -122,6 +124,46 @@ long filter(Instance inst) {
 
         }
     }
+    if(BRAINSTORM_ANTE8_BEAN) {
+		bool bean = false;
+        for (int i = 0; i < 150; i++) {
+            if(inst.nextShopItem(8).item == Item::Turtle_Bean){
+                bean = true;
+				break;
+            }
+        }
+        if(!bean) {
+            return 0; // If Turtle Bean is not found, return 0
+		}
+	}
+    if (BRAINSTORM_ANTE6_BURGLAR) {
+        bool burglar = false;
+        for (int i = 0; i < 50; i++) {
+            if (inst.nextShopItem(6).item == Item::Burglar) {
+                burglar = true;
+                break;
+            }
+        }
+        if (!burglar) {
+            for (int i = 0; i < 100; i++) {
+                if (inst.nextShopItem(7).item == Item::Burglar) {
+                    burglar = true;
+                    break;
+                }
+            }
+        }
+        if(!burglar) {
+            for (int i = 0; i < 100; i++) {
+                if (inst.nextShopItem(8).item == Item::Burglar) {
+                    burglar = true;
+                    break;
+                }
+            }
+		}
+        if!burglar) {
+            return 0; // If Burglar is not found, return 0
+        }
+    }
     if (BRAINSTORM_RETCON) {
         inst.initLocks(1, false, true);
         bool directorsCut = false;
@@ -144,7 +186,7 @@ long filter(Instance inst) {
     return 1; // Return a score of 1 if all conditions are met
 };
 
-std::string brainstorm_cpp(std::string seed, std::string voucher, std::string pack, std::string tag, double souls, bool observatory, bool perkeo, bool copymoney, bool retcon) {
+std::string brainstorm_cpp(std::string seed, std::string voucher, std::string pack, std::string tag, double souls, bool observatory, bool perkeo, bool copymoney, bool retcon, bool bean, bool burglar) {
     BRAINSTORM_PACK = stringToItem(pack);
     BRAINSTORM_TAG = stringToItem(tag);
     BRAINSTORM_VOUCHER = stringToItem(voucher);
@@ -153,18 +195,20 @@ std::string brainstorm_cpp(std::string seed, std::string voucher, std::string pa
     BRAINSTORM_PERKEO = perkeo;
 	BRAINSTORM_EARLYCOPY = copymoney;
 	BRAINSTORM_RETCON = retcon;
+	BRAINSTORM_ANTE6_BURGLAR = burglar;
+	BRAINSTORM_ANTE8_BEAN = bean;
     Search search(filter, seed, 12, 100000000);
     search.exitOnFind = true;
     return search.search();
 }
 
 extern "C" {
-    const char* brainstorm(const char* seed, const char* voucher, const char* pack, const char* tag, double souls, bool observatory, bool perkeo, bool copymoney, bool retcon) {
+    const char* brainstorm(const char* seed, const char* voucher, const char* pack, const char* tag, double souls, bool observatory, bool perkeo, bool copymoney, bool retcon, bool bean, bool burglar) {
         std::string cpp_seed(seed);
         std::string cpp_pack(pack);
         std::string cpp_voucher(voucher);
         std::string cpp_tag(tag);
-        std::string result = brainstorm_cpp(cpp_seed, cpp_voucher, cpp_pack, cpp_tag, souls, observatory, perkeo, copymoney, retcon);
+        std::string result = brainstorm_cpp(cpp_seed, cpp_voucher, cpp_pack, cpp_tag, souls, observatory, perkeo, copymoney, retcon, bean, burglar);
 
         char* c_result = (char*)malloc(result.length() + 1);
         strcpy(c_result, result.c_str());
