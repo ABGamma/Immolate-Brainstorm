@@ -608,7 +608,7 @@ inline Item Instance::nextTag(int ante) {
 
 inline Item Instance::nextBoss(int ante) {
   constexpr int MAX_BOSSES =
-      16; // Adjust this value based on the maximum number of bosses you expect
+      28; // Adjust this value based on the maximum number of bosses you expect
   std::array<Item, MAX_BOSSES> bossPool;
   int numBosses = 0;
 
