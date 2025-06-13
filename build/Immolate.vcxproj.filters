@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Andrew's PC\source\repos\ABGamma\Immolate-Brainstorm\src\immolate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Andrew's PC\source\repos\ABGamma\Immolate-Brainstorm\src\items.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Andrew's PC\source\repos\ABGamma\Immolate-Brainstorm\src\rng.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Andrew's PC\source\repos\ABGamma\Immolate-Brainstorm\src\search.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Andrew's PC\source\repos\ABGamma\Immolate-Brainstorm\src\seed.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Andrew's PC\source\repos\ABGamma\Immolate-Brainstorm\src\util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Andrew's PC\source\repos\ABGamma\Immolate-Brainstorm\src\functions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Andrew's PC\source\repos\ABGamma\Immolate-Brainstorm\src\functions.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Andrew's PC\source\repos\ABGamma\Immolate-Brainstorm\src\instance.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Andrew's PC\source\repos\ABGamma\Immolate-Brainstorm\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{7B287279-7D5B-3E6F-A96B-E0376FA79D25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{EA3F7E5C-4AB7-3AE7-8C5A-B26458EE8D4E}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

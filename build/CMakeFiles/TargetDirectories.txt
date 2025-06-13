@@ -1,0 +1,4 @@
+C:/Users/Andrew's PC/source/repos/ABGamma/Immolate-Brainstorm/build/CMakeFiles/Immolate.dir
+C:/Users/Andrew's PC/source/repos/ABGamma/Immolate-Brainstorm/build/CMakeFiles/immol.dir
+C:/Users/Andrew's PC/source/repos/ABGamma/Immolate-Brainstorm/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Andrew's PC/source/repos/ABGamma/Immolate-Brainstorm/build/CMakeFiles/ZERO_CHECK.dir
